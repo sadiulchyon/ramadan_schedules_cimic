@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { ramadan2026Data, eidData, type PrayerDay } from './data/prayerTimes';
 import { quranAyats } from './data/quranAyats';
-import { Moon, Sun, Clock, ChevronLeft, ChevronRight, Calendar, Utensils, Coffee, BookOpen } from 'lucide-react';
+import { Moon, Sun, Clock, ChevronLeft, ChevronRight, Calendar, Utensils, Coffee } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,6 +10,7 @@ function App() {
   const [selectedDay, setSelectedDay] = useState<number>(1);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [currentAyatIndex, setCurrentAyatIndex] = useState(0);
+  const swipeStartX = useRef<number | null>(null);
 
   // Update current time every minute
   useEffect(() => {
@@ -21,7 +22,7 @@ function App() {
   useEffect(() => {
     const ayatTimer = setInterval(() => {
       setCurrentAyatIndex((prev) => (prev + 1) % quranAyats.length);
-    }, 8000);
+    }, 4000);
     return () => clearInterval(ayatTimer);
   }, []);
 
@@ -55,6 +56,34 @@ function App() {
     }
   };
 
+  const navigateAyat = (direction: 'prev' | 'next') => {
+    if (direction === 'prev') {
+      setCurrentAyatIndex((prev) => (prev - 1 + quranAyats.length) % quranAyats.length);
+    } else {
+      setCurrentAyatIndex((prev) => (prev + 1) % quranAyats.length);
+    }
+  };
+
+  const handleSwipeStart = (clientX: number) => {
+    swipeStartX.current = clientX;
+  };
+
+  const handleSwipeEnd = (clientX: number) => {
+    if (swipeStartX.current === null) return;
+    const deltaX = clientX - swipeStartX.current;
+    const swipeThreshold = 50;
+    if (deltaX > swipeThreshold) {
+      navigateAyat('prev');
+    } else if (deltaX < -swipeThreshold) {
+      navigateAyat('next');
+    }
+    swipeStartX.current = null;
+  };
+
+  const handleSwipeCancel = () => {
+    swipeStartX.current = null;
+  };
+
   const isToday = selectedDay === todayRamadanDay;
 
   return (
@@ -86,21 +115,26 @@ function App() {
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Quran Ayat Rotator */}
-        <Card className="bg-gradient-to-r from-emerald-800/60 to-teal-800/60 border-emerald-600/40">
-          <CardContent className="p-4">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-emerald-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                <BookOpen className="w-4 h-4 text-emerald-300" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-lg font-arabic text-emerald-100 text-right leading-relaxed mb-2" dir="rtl">
+        <Card className="bg-gradient-to-r from-blue-950/70 via-indigo-950/70 to-emerald-950/60 border-blue-500/25">
+          <CardContent className="px-4 py-2">
+            <div
+              className="flex flex-col items-center gap-1 text-center select-none touch-pan-y"
+              onTouchStart={(event) => handleSwipeStart(event.touches[0].clientX)}
+              onTouchEnd={(event) => handleSwipeEnd(event.changedTouches[0].clientX)}
+              onTouchCancel={handleSwipeCancel}
+              onMouseDown={(event) => handleSwipeStart(event.clientX)}
+              onMouseUp={(event) => handleSwipeEnd(event.clientX)}
+              onMouseLeave={handleSwipeCancel}
+            >
+              <div className="min-w-0">
+                <p className="text-lg font-arabic text-emerald-100 text-center leading-relaxed" dir="rtl">
                   {quranAyats[currentAyatIndex].arabic}
                 </p>
-                <p className="text-sm text-emerald-200/90 italic leading-relaxed mb-1">
-                  "{quranAyats[currentAyatIndex].english}"
-                </p>
-                <p className="text-xs text-emerald-400">
-                  {quranAyats[currentAyatIndex].reference}
+                <p className="text-sm text-emerald-200/90 italic leading-relaxed">
+                  "{quranAyats[currentAyatIndex].english}" -{' '}
+                  <span className="text-xs text-emerald-400 not-italic">
+                    {quranAyats[currentAyatIndex].reference}
+                  </span>
                 </p>
               </div>
             </div>
