@@ -21,7 +21,7 @@ function App() {
   useEffect(() => {
     const ayatTimer = setInterval(() => {
       setCurrentAyatIndex((prev) => (prev + 1) % quranAyats.length);
-    }, 4000);
+    }, 8000);
     return () => clearInterval(ayatTimer);
   }, []);
 
