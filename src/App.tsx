@@ -58,7 +58,7 @@ function App() {
   const isToday = selectedDay === todayRamadanDay;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950 text-white">
+   <div className="min-h-screen bg-gradient-to-b from-emerald-900 via-emerald-800 to-emerald-900 text-white">
       {/* Header */}
       <header className="bg-emerald-950/80 backdrop-blur-md border-b border-emerald-800/50 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4">
