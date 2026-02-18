@@ -79,3 +79,30 @@
   font-family: 'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', 'Traditional Arabic', serif;
   line-height: 2;
 }
+
+.shooting-star {
+  position: absolute;
+  top: -10%;
+  left: -25%;
+  width: 140px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 246, 200, 0.95), rgba(255, 255, 255, 0));
+  opacity: 0;
+  transform: rotate(25deg);
+  animation: shooting-star 1.3s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes shooting-star {
+  0% {
+    transform: translate(-40px, -40px) rotate(25deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(360px, 140px) rotate(25deg);
+    opacity: 0;
+  }
+}

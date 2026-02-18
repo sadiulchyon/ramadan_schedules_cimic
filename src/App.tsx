@@ -10,12 +10,27 @@ function App() {
   const [selectedDay, setSelectedDay] = useState<number>(1);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [currentAyatIndex, setCurrentAyatIndex] = useState(0);
+  const [shootingStarKey, setShootingStarKey] = useState(0);
   const swipeStartX = useRef<number | null>(null);
 
   // Update current time every minute
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
+  }, []);
+
+  // Trigger a shooting star after a random delay (> 6s)
+  useEffect(() => {
+    let timerId = 0;
+    const scheduleStar = () => {
+      const delay = 6000 + Math.random() * 8000;
+      timerId = window.setTimeout(() => {
+        setShootingStarKey((prev) => prev + 1);
+        scheduleStar();
+      }, delay);
+    };
+    scheduleStar();
+    return () => window.clearTimeout(timerId);
   }, []);
 
   // Rotate Quran ayats every 4 seconds
@@ -115,8 +130,9 @@ function App() {
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Quran Ayat Rotator */}
-        <Card className="bg-gradient-to-r from-blue-950/70 via-indigo-950/70 to-emerald-950/60 border-blue-500/25">
-          <CardContent className="px-4 py-2">
+        <Card className="bg-black/90 border-white/10 shadow-lg">
+          <CardContent className="px-4 py-2 relative overflow-hidden">
+            <span key={shootingStarKey} className="shooting-star" aria-hidden="true" />
             <div
               className="flex flex-col items-center gap-1 text-center select-none touch-pan-y"
               onTouchStart={(event) => handleSwipeStart(event.touches[0].clientX)}
@@ -127,12 +143,12 @@ function App() {
               onMouseLeave={handleSwipeCancel}
             >
               <div className="min-w-0">
-                <p className="text-lg font-arabic text-emerald-100 text-center leading-relaxed" dir="rtl">
+                <p className="text-lg font-arabic text-amber-100 text-center leading-relaxed" dir="rtl">
                   {quranAyats[currentAyatIndex].arabic}
                 </p>
-                <p className="text-sm text-emerald-200/90 italic leading-relaxed">
+                <p className="text-sm text-slate-100/90 italic leading-relaxed">
                   "{quranAyats[currentAyatIndex].english}" -{' '}
-                  <span className="text-xs text-emerald-400 not-italic">
+                  <span className="text-xs text-slate-300 not-italic">
                     {quranAyats[currentAyatIndex].reference}
                   </span>
                 </p>
