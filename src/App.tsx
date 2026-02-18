@@ -352,8 +352,8 @@ function App() {
 
         {/* Footer */}
         <footer className="text-center text-xs text-emerald-600 py-4">
-          <p>Based on moonsighting.com calculation method</p>
-          <p className="mt-1">Ramadan 1447 AH / 2026 CE</p>
+          <p>Based on CIMIC website schedules</p>
+          <p className="mt-1">vibecoded by saadi, with love</p>
         </footer>
       </main>
     </div>
