@@ -1,6 +1,7 @@
 export interface QuranAyat {
   english: string;
   reference: string;
+  arabic?: string;
 }
 
 export const quranAyats: QuranAyat[] = [
