@@ -401,10 +401,20 @@ function App() {
         </Card>
 
         {/* Footer */}
-        <footer className="text-center text-xs text-emerald-600 py-4">
-          <p>Based on CIMIC website schedules</p>
-          <p className="mt-1">vibecoded by saadi, with love</p>
-        </footer>
+<footer className="text-center text-xs text-emerald-800/50 py-6 mt-2">
+  <p>Based on CIMIC website schedules</p>
+  <p className="mt-1">
+    vibecoded by saadi, with love &middot;{' '}
+    
+      href="https://github.com/sadiulchyon/ramadan_schedules_cimic"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="hover:text-emerald-600/70 transition-colors duration-200"
+    >
+      github
+    </a>
+  </p>
+</footer>
       </main>
     </div>
   );
