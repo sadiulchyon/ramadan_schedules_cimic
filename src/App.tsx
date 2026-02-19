@@ -482,20 +482,21 @@ function App() {
         </Card>
 
         {/* Footer */}
-        <footer className="text-center text-xs text-emerald-800/100 py-6 mt-2">
-          <p>Based on CIMIC website schedules</p>
-          <p className="mt-1">
-            vibecoded by saadi, with claude & love &middot;{' '}
-            <a
-              href="https://github.com/sadiulchyon/ramadan_schedules_cimic"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-emerald-600/100 transition-colors duration-200"
-            >
-              github
-            </a>
-          </p>
-        </footer>
+<footer className="text-center text-xs text-emerald-200 py-6 mt-2">
+  <p className="text-emerald-300">Based on CIMIC website schedules</p>
+  <p className="mt-1 text-emerald-200">
+    vibecoded by saadi, with claude & love &middot;{' '}
+    <a
+      href="https://github.com/sadiulchyon/ramadan_schedules_cimic"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-emerald-300 hover:text-emerald-100 transition-colors duration-200"
+    >
+      github
+    </a>
+  </p>
+</footer>
+
       </main>
     </div>
   );
