@@ -4,6 +4,7 @@ import { quranAyats } from './data/quranAyats';
 import { Moon, Sun, Clock, ChevronLeft, ChevronRight, Calendar, Utensils, Coffee } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 function App() {
   const [selectedDay, setSelectedDay] = useState<number>(1);
@@ -11,13 +12,14 @@ function App() {
   const [currentAyatIndex, setCurrentAyatIndex] = useState(0);
   const [shootingStarKey, setShootingStarKey] = useState(0);
   const swipeStartX = useRef<number | null>(null);
-  const quickJumpRef = useRef<HTMLDivElement>(null);
 
+  // Update current time every minute
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
 
+  // Trigger a shooting star after a random delay (> 6s)
   useEffect(() => {
     let timerId = 0;
     const scheduleStar = () => {
@@ -31,6 +33,7 @@ function App() {
     return () => window.clearTimeout(timerId);
   }, []);
 
+  // Rotate Quran ayats every 4 seconds
   useEffect(() => {
     const ayatTimer = setInterval(() => {
       setCurrentAyatIndex((prev) => (prev + 1) % quranAyats.length);
@@ -38,95 +41,68 @@ function App() {
     return () => clearInterval(ayatTimer);
   }, []);
 
+  // Determine today's Ramadan day based on date
+  // Ramadan 1 = Wednesday Feb 18 (Tuesday Feb 17 was Tarawih only, no fasting)
   const todayRamadanDay = useMemo(() => {
     const today = new Date();
     const ramadanStart = new Date('2026-02-18');
     const ramadanEnd = new Date('2026-03-19');
+    
     if (today < ramadanStart) return 1;
     if (today > ramadanEnd) return 30;
+    
     const diffTime = today.getTime() - ramadanStart.getTime();
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     return Math.min(Math.max(diffDays + 1, 1), 30);
   }, []);
 
+  // Set initial selected day to today
   useEffect(() => {
     setSelectedDay(todayRamadanDay);
   }, [todayRamadanDay]);
 
-  // Scroll quick-jump to selected day button
-  useEffect(() => {
-    if (quickJumpRef.current) {
-      const btn = quickJumpRef.current.querySelector(`[data-day="${selectedDay}"]`) as HTMLElement;
-      if (btn) {
-        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-      }
-    }
-  }, [selectedDay]);
-
-  // Parse "5:45 AM" → minutes since midnight
-  const parseTime = (timeStr: string): number => {
-    if (!timeStr) return -1;
-    const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
-    if (!match) return -1;
-    let hours = parseInt(match[1]);
-    const minutes = parseInt(match[2]);
-    const period = match[3].toUpperCase();
-    if (period === 'PM' && hours !== 12) hours += 12;
-    if (period === 'AM' && hours === 12) hours = 0;
-    return hours * 60 + minutes;
-  };
-
-  // Determine next prayer key for today
-  const nextPrayerKey = useMemo(() => {
-    if (selectedDay !== todayRamadanDay) return null;
-    const data = ramadan2026Data[selectedDay - 1];
-    const nowMins = currentTime.getHours() * 60 + currentTime.getMinutes();
-    const prayers = [
-      { key: 'fajr', time: parseTime(data.fajrAdhan) },
-      { key: 'sunrise', time: parseTime(data.sunrise) },
-      { key: 'dhuhr', time: parseTime(data.dhuhrAdhan) },
-      { key: 'asr', time: parseTime(data.asrAdhan) },
-      { key: 'maghrib', time: parseTime(data.maghribAdhan) },
-      { key: 'isha', time: parseTime(data.ishaAdhan) },
-      { key: 'tarawih', time: parseTime(data.tarawih) },
-    ];
-    const next = prayers.find((p) => p.time > nowMins);
-    return next ? next.key : null;
-  }, [currentTime, selectedDay, todayRamadanDay]);
-
   const currentDayData: PrayerDay = ramadan2026Data[selectedDay - 1];
 
   const navigateDay = (direction: 'prev' | 'next') => {
-    if (direction === 'prev' && selectedDay > 1) setSelectedDay(selectedDay - 1);
-    else if (direction === 'next' && selectedDay < 30) setSelectedDay(selectedDay + 1);
+    if (direction === 'prev' && selectedDay > 1) {
+      setSelectedDay(selectedDay - 1);
+    } else if (direction === 'next' && selectedDay < 30) {
+      setSelectedDay(selectedDay + 1);
+    }
   };
 
   const navigateAyat = (direction: 'prev' | 'next') => {
-    if (direction === 'prev') setCurrentAyatIndex((prev) => (prev - 1 + quranAyats.length) % quranAyats.length);
-    else setCurrentAyatIndex((prev) => (prev + 1) % quranAyats.length);
+    if (direction === 'prev') {
+      setCurrentAyatIndex((prev) => (prev - 1 + quranAyats.length) % quranAyats.length);
+    } else {
+      setCurrentAyatIndex((prev) => (prev + 1) % quranAyats.length);
+    }
   };
 
-  const handleSwipeStart = (clientX: number) => { swipeStartX.current = clientX; };
+  const handleSwipeStart = (clientX: number) => {
+    swipeStartX.current = clientX;
+  };
+
   const handleSwipeEnd = (clientX: number) => {
     if (swipeStartX.current === null) return;
     const deltaX = clientX - swipeStartX.current;
-    if (deltaX > 50) navigateAyat('prev');
-    else if (deltaX < -50) navigateAyat('next');
+    const swipeThreshold = 50;
+    if (deltaX > swipeThreshold) {
+      navigateAyat('prev');
+    } else if (deltaX < -swipeThreshold) {
+      navigateAyat('next');
+    }
     swipeStartX.current = null;
   };
-  const handleSwipeCancel = () => { swipeStartX.current = null; };
+
+  const handleSwipeCancel = () => {
+    swipeStartX.current = null;
+  };
 
   const isToday = selectedDay === todayRamadanDay;
 
-  const prayerRowClass = (key: string) =>
-    `p-4 flex items-center justify-between transition-colors ${
-      nextPrayerKey === key
-        ? 'border-l-2 border-emerald-400 bg-emerald-800/30'
-        : 'hover:bg-emerald-800/20'
-    }`;
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-900 via-emerald-800 to-emerald-900 text-white">
+   <div className="min-h-screen bg-gradient-to-b from-emerald-900 via-emerald-800 to-emerald-900 text-white">
       {/* Header */}
       <header className="bg-emerald-950/80 backdrop-blur-md border-b border-emerald-800/50 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4">
@@ -153,17 +129,17 @@ function App() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        {/* Quran Ayat Rotator — cohesive dark emerald instead of black */}
-        <Card className="bg-emerald-950/80 border-emerald-800/30 shadow-lg">
+        {/* Quran Ayat Rotator */}
+        <Card className="bg-black/90 border-white/10 shadow-lg">
           <CardContent className="px-4 py-2 relative overflow-hidden">
             <span key={shootingStarKey} className="shooting-star" aria-hidden="true" />
             <div
               className="flex flex-col items-center gap-1 text-center select-none touch-pan-y"
-              onTouchStart={(e) => handleSwipeStart(e.touches[0].clientX)}
-              onTouchEnd={(e) => handleSwipeEnd(e.changedTouches[0].clientX)}
+              onTouchStart={(event) => handleSwipeStart(event.touches[0].clientX)}
+              onTouchEnd={(event) => handleSwipeEnd(event.changedTouches[0].clientX)}
               onTouchCancel={handleSwipeCancel}
-              onMouseDown={(e) => handleSwipeStart(e.clientX)}
-              onMouseUp={(e) => handleSwipeEnd(e.clientX)}
+              onMouseDown={(event) => handleSwipeStart(event.clientX)}
+              onMouseUp={(event) => handleSwipeEnd(event.clientX)}
               onMouseLeave={handleSwipeCancel}
             >
               <div className="min-w-0">
@@ -192,11 +168,13 @@ function App() {
           >
             <ChevronLeft className="w-5 h-5" />
           </Button>
-
+          
           <div className="flex-1 text-center">
             <div className="inline-flex items-center gap-2 bg-emerald-900/50 rounded-full px-4 py-2 border border-emerald-700/30">
               <Calendar className="w-4 h-4 text-emerald-400" />
-              <span className="text-sm font-medium text-emerald-200">Day {selectedDay} of 30</span>
+              <span className="text-sm font-medium text-emerald-200">
+                Day {selectedDay} of 30
+              </span>
               {isToday && (
                 <span className="text-xs bg-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded-full">
                   Today
@@ -204,7 +182,7 @@ function App() {
               )}
             </div>
           </div>
-
+          
           <Button
             variant="outline"
             size="icon"
@@ -218,13 +196,15 @@ function App() {
 
         {/* Date Display */}
         <div className="text-center space-y-1">
-          <h2 className="text-2xl font-bold text-emerald-100">{currentDayData.hijriDate}</h2>
+          <h2 className="text-2xl font-bold text-emerald-100">
+            {currentDayData.hijriDate}
+          </h2>
           <p className="text-emerald-400">
             {currentDayData.dayName}, {currentDayData.gregorianDate}/2026
           </p>
         </div>
 
-        {/* Sehri & Iftar Cards — larger time, subtle glow */}
+        {/* Sehri & Iftar Cards */}
         <div className="grid grid-cols-2 gap-4">
           <Card className="bg-gradient-to-br from-indigo-900/60 to-indigo-950/60 border-indigo-700/30">
             <CardContent className="p-4 text-center">
@@ -232,33 +212,29 @@ function App() {
                 <Coffee className="w-4 h-4 text-indigo-300" />
                 <span className="text-xs font-medium text-indigo-300 uppercase tracking-wider">Sehri Ends</span>
               </div>
-              <p className="text-3xl font-bold text-white drop-shadow-[0_0_8px_rgba(165,180,252,0.5)]">
-                {currentDayData.fajrAdhan}
-              </p>
+              <p className="text-2xl font-bold text-white">{currentDayData.fajrAdhan}</p>
               <p className="text-xs text-indigo-400 mt-1">Fajr Adhan</p>
             </CardContent>
           </Card>
-
+          
           <Card className="bg-gradient-to-br from-amber-900/60 to-amber-950/60 border-amber-700/30">
             <CardContent className="p-4 text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Utensils className="w-4 h-4 text-amber-300" />
                 <span className="text-xs font-medium text-amber-300 uppercase tracking-wider">Iftar</span>
               </div>
-              <p className="text-3xl font-bold text-white drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]">
-                {currentDayData.maghribAdhan}
-              </p>
+              <p className="text-2xl font-bold text-white">{currentDayData.maghribAdhan}</p>
               <p className="text-xs text-amber-400 mt-1">Maghrib Adhan</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Prayer Times — next prayer highlighted */}
+        {/* Prayer Times */}
         <Card className="bg-emerald-900/40 border-emerald-700/30 overflow-hidden">
           <CardContent className="p-0">
             <div className="divide-y divide-emerald-800/30">
               {/* Fajr */}
-              <div className={prayerRowClass('fajr')}>
+              <div className="p-4 flex items-center justify-between hover:bg-emerald-800/20 transition-colors">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center">
                     <Moon className="w-4 h-4 text-indigo-300" />
@@ -275,7 +251,7 @@ function App() {
               </div>
 
               {/* Sunrise */}
-              <div className={prayerRowClass('sunrise')}>
+              <div className="p-4 flex items-center justify-between hover:bg-emerald-800/20 transition-colors">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center">
                     <Sun className="w-4 h-4 text-orange-300" />
@@ -291,7 +267,7 @@ function App() {
               </div>
 
               {/* Dhuhr */}
-              <div className={prayerRowClass('dhuhr')}>
+              <div className="p-4 flex items-center justify-between hover:bg-emerald-800/20 transition-colors">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-yellow-500/20 rounded-lg flex items-center justify-center">
                     <Sun className="w-4 h-4 text-yellow-300" />
@@ -308,7 +284,7 @@ function App() {
               </div>
 
               {/* Asr */}
-              <div className={prayerRowClass('asr')}>
+              <div className="p-4 flex items-center justify-between hover:bg-emerald-800/20 transition-colors">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center">
                     <Sun className="w-4 h-4 text-amber-300" />
@@ -325,7 +301,7 @@ function App() {
               </div>
 
               {/* Maghrib */}
-              <div className={`${prayerRowClass('maghrib')} bg-amber-950/20`}>
+              <div className="p-4 flex items-center justify-between hover:bg-emerald-800/20 transition-colors bg-amber-950/20">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-orange-600/20 rounded-lg flex items-center justify-center">
                     <Sun className="w-4 h-4 text-orange-400" />
@@ -342,7 +318,7 @@ function App() {
               </div>
 
               {/* Isha */}
-              <div className={prayerRowClass('isha')}>
+              <div className="p-4 flex items-center justify-between hover:bg-emerald-800/20 transition-colors">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-indigo-600/20 rounded-lg flex items-center justify-center">
                     <Moon className="w-4 h-4 text-indigo-400" />
@@ -359,7 +335,7 @@ function App() {
               </div>
 
               {/* Tarawih */}
-              <div className={`${prayerRowClass('tarawih')} bg-emerald-800/30`}>
+              <div className="p-4 flex items-center justify-between bg-emerald-800/30">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center">
                     <Clock className="w-4 h-4 text-emerald-300" />
@@ -377,34 +353,25 @@ function App() {
           </CardContent>
         </Card>
 
-        {/* Quick Day Selector — horizontal scroll strip */}
-        <div className="space-y-2">
+        {/* Quick Day Selector */}
+        <div className="space-y-3">
           <p className="text-sm font-medium text-emerald-400">Quick Jump</p>
-          <div
-            ref={quickJumpRef}
-            className="flex overflow-x-auto gap-1 pb-2 scrollbar-none"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {ramadan2026Data.map((day) => (
-              <button
-                key={day.hijriDay}
-                data-day={day.hijriDay}
-                onClick={() => setSelectedDay(day.hijriDay)}
-                className={`flex-shrink-0 w-8 h-8 text-xs rounded-md transition-colors ${
-                  selectedDay === day.hijriDay
-                    ? 'bg-emerald-600 text-white'
-                    : day.hijriDay === todayRamadanDay
-                    ? 'bg-emerald-700/60 text-emerald-200 ring-1 ring-emerald-400'
-                    : 'bg-emerald-950/50 text-emerald-400 hover:bg-emerald-900/50'
-                }`}
-              >
-                {day.hijriDay}
-              </button>
-            ))}
-          </div>
+          <Tabs value={selectedDay.toString()} onValueChange={(v) => setSelectedDay(parseInt(v))}>
+            <TabsList className="flex flex-wrap h-auto gap-1 bg-emerald-950/50 p-1">
+              {ramadan2026Data.map((day) => (
+                <TabsTrigger
+                  key={day.hijriDay}
+                  value={day.hijriDay.toString()}
+                  className="w-8 h-8 p-0 text-xs data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-emerald-400 hover:bg-emerald-900/50"
+                >
+                  {day.hijriDay}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </div>
 
-        {/* Eid Info — unchanged */}
+        {/* Eid Info */}
         <Card className="bg-gradient-to-r from-emerald-800/40 to-teal-800/40 border-emerald-600/30">
           <CardContent className="p-4">
             <div className="flex items-center gap-3 mb-3">
@@ -413,9 +380,7 @@ function App() {
               </div>
               <div>
                 <h3 className="font-bold text-emerald-100">Eid al-Fitr</h3>
-                <p className="text-sm text-emerald-400">
-                  {eidData.hijriDate} • {eidData.dayName}, {eidData.gregorianDate}/2026
-                </p>
+                <p className="text-sm text-emerald-400">{eidData.hijriDate} • {eidData.dayName}, {eidData.gregorianDate}/2026</p>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-2 text-center">
@@ -436,19 +401,9 @@ function App() {
         </Card>
 
         {/* Footer */}
-        <footer className="text-center text-xs text-emerald-800/50 py-6 mt-2">
+        <footer className="text-center text-xs text-emerald-600 py-4">
           <p>Based on CIMIC website schedules</p>
-          <p className="mt-1">
-            vibecoded by saadi, with love &middot;{' '}
-            <a
-              href="https://github.com/sadiulchyon/ramadan_schedules_cimic"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-emerald-600/70 transition-colors duration-200"
-            >
-              github
-            </a>
-          </p>
+          <p className="mt-1">vibecoded by saadi, with love</p>
         </footer>
       </main>
     </div>
