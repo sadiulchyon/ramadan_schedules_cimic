@@ -4,6 +4,8 @@ import { quranAyats } from './data/quranAyats';
 import { Moon, Sun, Clock, ChevronLeft, ChevronRight, Calendar, Utensils, Coffee } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { MapPin } from 'lucide-react';
+
 
 function App() {
   // logic to get today's day immediately on mount
@@ -146,9 +148,13 @@ function App() {
                 <Moon className="w-5 h-5 text-emerald-300" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-emerald-100">Ramadan 2026</h1>
-                <p className="text-xs text-emerald-400">1447 AH Prayer Times</p>
-              </div>
+  <h1 className="text-lg font-bold text-emerald-100">Ramadan 2026</h1>
+  <p className="text-xs text-emerald-300 flex items-center gap-1">
+    <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+    Champaign
+  </p>
+</div>
+
             </div>
             <div className="text-right">
               <p className="text-sm font-medium text-emerald-200">
