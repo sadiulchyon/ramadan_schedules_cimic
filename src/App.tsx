@@ -154,34 +154,35 @@ function App() {
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         
-        {/* Quran Ayat Rotator — Night Sky Edition */}
-        <Card className="relative overflow-hidden border-0 shadow-xl bg-[#0f172a] min-h-[180px]">
-            {/* 1. Deep Night Sky Gradient */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-800 via-[#0B1026] to-[#050a14]" />
+        {/* Quran Ayat Rotator — Mountain Range Edition */}
+        <Card className="relative overflow-hidden border-0 shadow-xl bg-[#0b1026] min-h-[200px] group">
+            {/* 1. Sky Gradient */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-950 via-slate-900 to-[#020617]" />
 
-            {/* 2. Static Stars (CSS generated dots) */}
-            <div className="absolute inset-0 opacity-60">
-                <div className="absolute top-4 left-10 w-1 h-1 bg-white rounded-full shadow-[0_0_4px_white]" />
-                <div className="absolute top-12 right-20 w-0.5 h-0.5 bg-white rounded-full" />
-                <div className="absolute top-8 left-1/3 w-0.5 h-0.5 bg-white rounded-full" />
-                <div className="absolute bottom-12 right-12 w-0.5 h-0.5 bg-slate-300 rounded-full" />
-                <div className="absolute top-1/2 left-4 w-0.5 h-0.5 bg-slate-400 rounded-full" />
+            {/* 2. Stars */}
+            <div className="absolute inset-0 opacity-70">
+                <div className="absolute top-6 left-12 w-0.5 h-0.5 bg-white rounded-full shadow-[0_0_2px_white]" />
+                <div className="absolute top-16 right-24 w-0.5 h-0.5 bg-white rounded-full" />
+                <div className="absolute top-8 left-1/3 w-1 h-1 bg-indigo-200 rounded-full opacity-80" />
+                <div className="absolute top-24 right-10 w-0.5 h-0.5 bg-slate-300 rounded-full" />
+                <div className="absolute top-1/2 left-8 w-0.5 h-0.5 bg-slate-400 rounded-full" />
             </div>
 
-            {/* 3. The Lonely Tree (SVG Silhouette) */}
-            <div className="absolute bottom-0 right-[-10px] md:right-8 opacity-40 pointer-events-none">
-                <svg width="140" height="140" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                    <path 
-                        fill="#020617" 
-                        d="M100,200 L100,160 Q100,130 80,110 Q60,90 50,70 M100,160 Q110,130 140,100 Q160,80 170,60 M100,160 L100,100" 
-                        stroke="#0f172a" 
-                        strokeWidth="8" 
-                        strokeLinecap="round"
-                    />
-                     <path 
-                        fill="#020617" 
-                        d="M95,200 L105,200 L105,150 L95,150 Z" 
-                    />
+            {/* 3. Cascading Mountains Layer */}
+            <div className="absolute inset-x-0 bottom-0 w-full h-full pointer-events-none">
+                {/* Back Range - Furthest, Lightest */}
+                <svg className="absolute bottom-0 w-full h-[60%] text-indigo-900/30" viewBox="0 0 1200 320" preserveAspectRatio="none">
+                    <path fill="currentColor" d="M0,224L48,208C96,192,192,160,288,165.3C384,171,480,213,576,229.3C672,245,768,235,864,208C960,181,1056,139,1152,133.3C1248,128,1344,160,1392,176L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+                </svg>
+
+                {/* Mid Range - Medium Depth */}
+                <svg className="absolute bottom-0 w-full h-[50%] text-slate-900/50" viewBox="0 0 1200 320" preserveAspectRatio="none">
+                    <path fill="currentColor" d="M0,288L60,272C120,256,240,224,360,224C480,224,600,256,720,250.7C840,245,960,203,1080,197.3C1200,192,1320,224,1380,240L1440,256L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+                </svg>
+
+                {/* Front Range - Darkest, Foreground */}
+                <svg className="absolute bottom-[-1px] w-full h-[40%] text-[#020617]" viewBox="0 0 1200 320" preserveAspectRatio="none">
+                    <path fill="currentColor" d="M0,256L80,229.3C160,203,320,149,480,165.3C640,181,800,267,960,277.3C1120,288,1280,224,1360,192L1440,160L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
                 </svg>
             </div>
 
@@ -189,7 +190,7 @@ function App() {
             <span key={shootingStarKey} className="shooting-star" aria-hidden="true" />
 
             {/* 5. Content Overlay */}
-            <CardContent className="relative z-10 px-6 py-8 flex items-center justify-center h-full">
+            <CardContent className="relative z-10 px-6 py-10 flex items-center justify-center h-full min-h-[180px]">
                 <div
                     className="flex flex-col items-center gap-3 text-center select-none touch-pan-y w-full max-w-2xl mx-auto"
                     onTouchStart={(e) => handleSwipeStart(e.touches[0].clientX)}
@@ -199,14 +200,14 @@ function App() {
                     onMouseUp={(e) => handleSwipeEnd(e.clientX)}
                     onMouseLeave={handleSwipeCancel}
                 >
-                    <div className="min-w-0 animate-in fade-in zoom-in duration-500">
-                        <p className="text-xl md:text-2xl font-arabic text-amber-100/90 text-center leading-loose drop-shadow-md" dir="rtl">
+                    <div className="min-w-0 animate-in fade-in zoom-in duration-700">
+                        <p className="text-xl md:text-2xl font-arabic text-amber-50 text-center leading-loose drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]" dir="rtl">
                             {quranAyats[currentAyatIndex].arabic}
                         </p>
-                        <p className="text-sm md:text-base text-indigo-100/80 italic mt-2 leading-relaxed font-light">
+                        <p className="text-sm md:text-base text-indigo-100 italic mt-2 leading-relaxed font-light drop-shadow-md">
                             "{quranAyats[currentAyatIndex].english}"
                         </p>
-                        <p className="text-xs text-indigo-300/60 mt-1 uppercase tracking-widest">
+                        <p className="text-xs text-indigo-300/80 mt-1 uppercase tracking-widest font-medium">
                             {quranAyats[currentAyatIndex].reference}
                         </p>
                     </div>
