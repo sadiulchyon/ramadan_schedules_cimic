@@ -484,7 +484,7 @@ function App() {
         {/* Footer */}
 <footer className="text-center text-xs text-emerald-200 py-6 mt-2">
   <p className="text-emerald-300">Based on CIMIC website schedules</p>
-  <p className="mt-1 text-emerald-200">
+  <p className="text-emerald-200">
     vibecoded by saadi, with claude & love &middot;{' '}
     <a
       href="https://github.com/sadiulchyon/ramadan_schedules_cimic"
