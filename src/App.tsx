@@ -482,7 +482,7 @@ function App() {
         </Card>
 
         {/* Footer */}
-        <footer className="text-center text-xs text-emerald-800/70 py-6 mt-2">
+        <footer className="text-center text-xs text-emerald-800/80 py-6 mt-2">
           <p>Based on CIMIC website schedules</p>
           <p className="mt-1">
             vibecoded by saadi, with claude & love &middot;{' '}
@@ -490,7 +490,7 @@ function App() {
               href="https://github.com/sadiulchyon/ramadan_schedules_cimic"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-emerald-600/70 transition-colors duration-200"
+              className="hover:text-emerald-600/80 transition-colors duration-200"
             >
               github
             </a>
