@@ -164,45 +164,58 @@ function App() {
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         
-        {/* Quran Ayat Rotator — Compact Mountain Range Edition */}
-        {/* CHANGED: h-40 (160px) fixed height */}
-        <Card className="relative overflow-hidden border-0 shadow-xl bg-[#0b1026] h-40 group">
-            {/* Sky Gradient */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-950 via-slate-900 to-[#020617]" />
+    {/* Quran Ayat Rotator — Mount Hood & Trillium Lake Night Edition */}
+        <Card className="relative overflow-hidden border-0 shadow-xl bg-[#0f172a] h-48 group rounded-xl">
+            {/* 1. Night Sky Gradient */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#020617_0%,#1e1b4b_60%,#312e81_100%)]" />
 
-            {/* Stars */}
-            <div className="absolute inset-0 opacity-70">
-                <div className="absolute top-4 left-12 w-0.5 h-0.5 bg-white rounded-full shadow-[0_0_2px_white]" />
-                <div className="absolute top-10 right-24 w-0.5 h-0.5 bg-white rounded-full" />
-                <div className="absolute top-6 left-1/3 w-1 h-1 bg-indigo-200 rounded-full opacity-80" />
-                <div className="absolute top-14 right-10 w-0.5 h-0.5 bg-slate-300 rounded-full" />
+            {/* 2. Stars */}
+            <div className="absolute inset-0 opacity-80">
+                <div className="absolute top-6 left-10 w-0.5 h-0.5 bg-white rounded-full shadow-[0_0_2px_white]" />
+                <div className="absolute top-12 right-20 w-1 h-1 bg-indigo-100 rounded-full opacity-90 shadow-[0_0_4px_white]" />
+                <div className="absolute top-20 left-1/4 w-0.5 h-0.5 bg-white rounded-full" />
+                <div className="absolute top-8 right-1/3 w-0.5 h-0.5 bg-slate-300 rounded-full" />
             </div>
 
-            {/* Cascading Mountains Layer - Adjusted heights for shorter container */}
-            <div className="absolute inset-x-0 bottom-0 w-full h-full pointer-events-none">
-                {/* Back Range - Taller relative to container */}
-                <svg className="absolute bottom-0 w-full h-[85%] text-indigo-900/30" viewBox="0 0 1200 320" preserveAspectRatio="none">
-                    <path fill="currentColor" d="M0,224L48,208C96,192,192,160,288,165.3C384,171,480,213,576,229.3C672,245,768,235,864,208C960,181,1056,139,1152,133.3C1248,128,1344,160,1392,176L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-                </svg>
+            {/* 3. Mount Hood & Reflection Layer */}
+            <div className="absolute inset-0 flex items-end justify-center pb-8">
+                <svg className="w-full h-full absolute bottom-0" preserveAspectRatio="none" viewBox="0 0 1200 400">
+                    {/* The Reflection (Inverted, Lower Opacity, Blurred) */}
+                    <g className="opacity-30 mix-blend-screen blur-[1px]" transform="scale(1, -1) translate(0, -400)">
+                         <path fill="#334155" d="M600,100 L450,400 L750,400 Z" /> {/* Mountain Base */}
+                         <path fill="#94a3b8" d="M600,100 L510,280 L540,260 L570,290 L600,220 L630,290 L660,260 L690,280 Z" /> {/* Snow Cap */}
+                    </g>
+                    
+                    {/* Water Line Overlay */}
+                    <rect x="0" y="200" width="1200" height="200" fill="url(#lakeGradient)" className="opacity-40" />
+                    <defs>
+                        <linearGradient id="lakeGradient" x1="0" x2="0" y1="0" y2="1">
+                            <stop offset="0%" stopColor="#1e1b4b" stopOpacity="0.6"/>
+                            <stop offset="100%" stopColor="#020617" stopOpacity="0.9"/>
+                        </linearGradient>
+                    </defs>
 
-                {/* Mid Range */}
-                <svg className="absolute bottom-0 w-full h-[65%] text-slate-900/50" viewBox="0 0 1200 320" preserveAspectRatio="none">
-                    <path fill="currentColor" d="M0,288L60,272C120,256,240,224,360,224C480,224,600,256,720,250.7C840,245,960,203,1080,197.3C1200,192,1320,224,1380,240L1440,256L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
-                </svg>
-
-                {/* Front Range */}
-                <svg className="absolute bottom-[-1px] w-full h-[45%] text-[#020617]" viewBox="0 0 1200 320" preserveAspectRatio="none">
-                    <path fill="currentColor" d="M0,256L80,229.3C160,203,320,149,480,165.3C640,181,800,267,960,277.3C1120,288,1280,224,1360,192L1440,160L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
+                    {/* The Mountain (Real) */}
+                    <path fill="#1e293b" d="M600,100 L400,400 L800,400 Z" /> {/* Dark Base */}
+                    <path fill="#e2e8f0" d="M600,100 L510,280 L540,260 L570,290 L600,220 L630,290 L660,260 L690,280 Z" /> {/* Snow Peak */}
                 </svg>
             </div>
 
-            {/* Shooting Star */}
+            {/* 4. Trillium Lake Pine Trees Silhouettes (Foreground) */}
+            <div className="absolute inset-0 pointer-events-none">
+                 <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 300">
+                    <path fill="#020617" d="M0,300 L0,150 L20,300 L30,220 L50,300 L60,250 L80,300 Z" /> {/* Left Bank */}
+                    <path fill="#020617" d="M1000,300 L1000,140 L970,300 L950,210 L920,300 L900,260 L880,300 Z" /> {/* Right Bank */}
+                 </svg>
+            </div>
+
+            {/* 5. Shooting Star */}
             <span key={shootingStarKey} className="shooting-star" aria-hidden="true" />
 
-            {/* Content Overlay */}
-            <CardContent className="relative z-10 px-4 py-0 flex items-center justify-center h-full">
+            {/* 6. Content Overlay */}
+            <CardContent className="relative z-20 px-4 flex items-center justify-center h-full">
                 <div
-                    className="flex flex-col items-center justify-center gap-1 text-center select-none touch-pan-y w-full max-w-2xl mx-auto"
+                    className="flex flex-col items-center justify-center text-center w-full max-w-2xl mx-auto pt-4"
                     onTouchStart={(e) => handleSwipeStart(e.touches[0].clientX)}
                     onTouchEnd={(e) => handleSwipeEnd(e.changedTouches[0].clientX)}
                     onTouchCancel={handleSwipeCancel}
@@ -210,15 +223,17 @@ function App() {
                     onMouseUp={(e) => handleSwipeEnd(e.clientX)}
                     onMouseLeave={handleSwipeCancel}
                 >
-                    <div className="min-w-0 animate-in fade-in zoom-in duration-700 space-y-1">
-                        <p className="text-xl font-arabic text-amber-50 text-center leading-relaxed drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]" dir="rtl">
+                    <div className="min-w-0 animate-in fade-in zoom-in duration-700 space-y-2">
+                        {/* Arabic Text with heavy shadow for readability over snowy peak */}
+                        <p className="text-xl font-arabic text-white text-center leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]" dir="rtl">
                             {quranAyats[currentAyatIndex].arabic}
                         </p>
-                        <div className="space-y-0.5">
-                            <p className="text-sm text-indigo-100 italic leading-snug font-light drop-shadow-md line-clamp-2">
+                        
+                        <div className="space-y-1">
+                            <p className="text-sm text-indigo-100 italic leading-snug font-light drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] line-clamp-2">
                                 "{quranAyats[currentAyatIndex].english}"
                             </p>
-                            <p className="text-[10px] text-indigo-300/80 uppercase tracking-widest font-medium">
+                            <p className="text-[10px] text-indigo-200/90 uppercase tracking-widest font-medium drop-shadow-md">
                                 {quranAyats[currentAyatIndex].reference}
                             </p>
                         </div>
