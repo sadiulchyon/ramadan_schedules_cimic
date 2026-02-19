@@ -482,10 +482,10 @@ function App() {
         </Card>
 
         {/* Footer */}
-        <footer className="text-center text-xs text-emerald-800/50 py-6 mt-2">
+        <footer className="text-center text-xs text-emerald-800/70 py-6 mt-2">
           <p>Based on CIMIC website schedules</p>
           <p className="mt-1">
-            vibecoded by saadi, with love &middot;{' '}
+            vibecoded by saadi, with claude & love &middot;{' '}
             <a
               href="https://github.com/sadiulchyon/ramadan_schedules_cimic"
               target="_blank"
