@@ -86,17 +86,18 @@ function App() {
   const nextPrayerKey = useMemo(() => {
     if (!entry || !isToday) return null;
     const nowMins = currentTime.getHours() * 60 + currentTime.getMinutes();
+    // Each prayer is highlighted until 15 min after its iqamah (or adhan for maghrib/tarawih).
+    // The first prayer whose cutoff is still in the future is the active/next prayer.
     const prayers = [
-      { key: 'fajr',    time: parseTime(entry.fajrAdhan) },
-      { key: 'sunrise', time: parseTime(entry.sunrise) },
-      { key: 'dhuhr',   time: parseTime(entry.dhuhrAdhan) },
-      { key: 'asr',     time: parseTime(entry.asrAdhan) },
-      { key: 'maghrib', time: parseTime(entry.maghribAdhan) },
-      { key: 'isha',    time: parseTime(entry.ishaAdhan) },
-      ...(inRamadan && entry.tarawih ? [{ key: 'tarawih', time: parseTime(entry.tarawih) }] : []),
+      { key: 'fajr',    cutoff: parseTime(entry.fajrIqamah) + 15 },
+      { key: 'dhuhr',   cutoff: parseTime(entry.dhuhrIqamah) + 15 },
+      { key: 'asr',     cutoff: parseTime(entry.asrIqamah) + 15 },
+      { key: 'maghrib', cutoff: parseTime(entry.maghribAdhan) + 15 },
+      { key: 'isha',    cutoff: parseTime(entry.ishaIqamah) + 15 },
+      ...(inRamadan && entry.tarawih ? [{ key: 'tarawih', cutoff: parseTime(entry.tarawih) + 30 }] : []),
     ];
-    const next = prayers.find((p) => p.time > nowMins);
-    return next ? next.key : null;
+    const active = prayers.find((p) => p.cutoff > nowMins);
+    return active ? active.key : null;
   }, [currentTime, entry, isToday, inRamadan]);
 
   const navigateDay = (direction: 'prev' | 'next') => {
@@ -150,7 +151,7 @@ function App() {
                 <h1 className="text-lg font-bold text-emerald-100">Prayer Times</h1>
                 <p className="text-xs text-emerald-300 flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-                  Champaign
+                  Champaign-Urbana
                 </p>
               </div>
             </div>
@@ -296,6 +297,33 @@ function App() {
               </div>
             )}
 
+            {/* Jumu'ah Card — Fridays only */}
+            {isFriday && entry.jumuahTimes && (
+              <Card className="bg-gradient-to-r from-teal-900/40 to-emerald-900/40 border-teal-700/30">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 bg-teal-500/20 rounded-full flex items-center justify-center">
+                      <Sun className="w-5 h-5 text-teal-300" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-teal-100">Jumu'ah</h3>
+                      <p className="text-sm text-teal-400">Friday Prayer</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-center">
+                    <div className="bg-teal-950/50 rounded-lg p-2">
+                      <p className="text-xs text-teal-500">1st Prayer</p>
+                      <p className="font-semibold text-teal-200">{entry.jumuahTimes[0]}</p>
+                    </div>
+                    <div className="bg-teal-950/50 rounded-lg p-2">
+                      <p className="text-xs text-teal-500">2nd Prayer</p>
+                      <p className="font-semibold text-teal-200">{entry.jumuahTimes[1]}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Prayer Times */}
             <Card className="bg-emerald-900/40 border-emerald-700/30 overflow-hidden">
               <CardContent className="p-0">
@@ -368,21 +396,21 @@ function App() {
                   </div>
 
                   {/* Maghrib */}
-                  <div className={`${prayerRowClass('maghrib')} bg-amber-950/20`}>
+                  <div className={prayerRowClass('maghrib')}>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-orange-600/20 rounded-lg flex items-center justify-center">
                         <Sun className="w-4 h-4 text-orange-400" />
                       </div>
                       <div>
-                        <p className="font-medium text-amber-100">Maghrib</p>
-                        <p className="text-xs text-amber-500">
+                        <p className="font-medium text-emerald-100">Maghrib</p>
+                        <p className="text-xs text-emerald-500">
                           Sunset Prayer{inRamadan ? ' • Iftar' : ''}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-amber-100">{entry.maghribAdhan}</p>
-                      <p className="text-xs text-amber-500">At Sunset</p>
+                      <p className="font-semibold text-emerald-100">{entry.maghribAdhan}</p>
+                      <p className="text-xs text-emerald-500">At Sunset</p>
                     </div>
                   </div>
 
@@ -424,32 +452,6 @@ function App() {
               </CardContent>
             </Card>
 
-            {/* Jumu'ah Card — Fridays only */}
-            {isFriday && entry.jumuahTimes && (
-              <Card className="bg-gradient-to-r from-teal-900/40 to-emerald-900/40 border-teal-700/30">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 bg-teal-500/20 rounded-full flex items-center justify-center">
-                      <Sun className="w-5 h-5 text-teal-300" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-teal-100">Jumu'ah</h3>
-                      <p className="text-sm text-teal-400">Friday Prayer</p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-center">
-                    <div className="bg-teal-950/50 rounded-lg p-2">
-                      <p className="text-xs text-teal-500">1st Prayer</p>
-                      <p className="font-semibold text-teal-200">{entry.jumuahTimes[0]}</p>
-                    </div>
-                    <div className="bg-teal-950/50 rounded-lg p-2">
-                      <p className="text-xs text-teal-500">2nd Prayer</p>
-                      <p className="font-semibold text-teal-200">{entry.jumuahTimes[1]}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
           </>
         )}
 
